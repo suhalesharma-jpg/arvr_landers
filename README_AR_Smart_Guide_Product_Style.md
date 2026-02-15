@@ -4,15 +4,14 @@
 
 ------------------------------------------------------------------------
 
-```{=html}
+
 <p align="center">
-```
-`<b>`{=html}An Augmented Reality mobile application that brings
-monuments and museum exhibits to life through real-time image
-recognition and contextual overlays.`</b>`{=html}
-```{=html}
+  <b>
+  An Augmented Reality mobile application that brings monuments and museum exhibits to life through real-time image recognition and contextual overlays.
+  </b>
 </p>
-```
+
+
 
 ------------------------------------------------------------------------
 
