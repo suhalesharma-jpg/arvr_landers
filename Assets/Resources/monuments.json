@@ -1,1 +1,12 @@
+{
+  "monuments": [
+    {
+      "monumentName": "RedFort",
+      "whyBuilt": "Built by Mughal emperor Shah Jahan in 1648.",
+      "importance": "Symbol of Mughal power and Indian independence.",
+      "uniqueFeature": "Constructed using red sandstone.",
+      "audioClipName": "redfort_audio"
+    }
+  ]
+}
 
