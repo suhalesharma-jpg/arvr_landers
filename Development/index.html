@@ -3,158 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AR Smart Guide | Final Evaluation</title>
+    <title>AR Smart Guide | Live Evaluation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
     <style>
-        :root {
-            --primary: #00f2ff;
-            --bg-dark: rgba(15, 15, 15, 0.95);
-            --glass: rgba(255, 255, 255, 0.1);
-        }
+        :root { --primary: #00f2ff; --bg-dark: rgba(15, 15, 15, 0.95); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body, html { height: 100%; width: 100%; overflow: hidden; background: #000; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body, html { height: 100%; width: 100%; overflow: hidden; background: #000; color: #fff; }
-
-        /* Background: Simulates the Camera View */
-        .ar-viewport {
+        /* Fullscreen Camera Feed */
+        #video-feed {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
+            object-fit: cover;
             z-index: 1;
+            transform: scaleX(-1); /* Flips for laptop view, common in AR */
         }
 
-        /* Overlay Layer */
-        .ui-layer {
-            position: relative;
-            z-index: 10;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .ui-overlay { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; }
+
+        /* Permission Button (Hidden after start) */
+        #start-screen {
+            position: fixed; inset: 0; z-index: 100;
+            background: #111; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
         }
 
-        /* Top Bar */
-        nav {
-            padding: 30px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* Scanning HUD */
+        nav { padding: 30px 20px; display: flex; justify-content: space-between; }
+        .badge { background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--primary); color: var(--primary); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .pulse { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        .status-badge {
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            padding: 8px 16px;
-            border-radius: 50px;
-            border: 1px solid var(--primary);
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .pulse-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-
-        /* Scanning Reticle (Center) */
-        .scanner-frame {
-            position: absolute;
-            top: 40%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 260px; height: 260px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 40px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .scanner-line {
-            width: 100%; height: 2px;
-            background: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
-            position: absolute;
-            animation: scan 3s ease-in-out infinite;
-        }
+        .reticle { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border: 2px solid rgba(255,255,255,0.2); border-radius: 40px; }
+        .scan-line { width: 100%; height: 2px; background: var(--primary); position: absolute; animation: scan 3s infinite; box-shadow: 0 0 15px var(--primary); }
         @keyframes scan { 0%, 100% { top: 5%; } 50% { top: 95%; } }
 
-        /* Sliding Info Panel */
-        .info-card {
-            background: var(--bg-dark);
-            backdrop-filter: blur(20px);
-            border-top: 2px solid var(--primary);
-            border-radius: 30px 30px 0 0;
-            padding: 30px 25px;
-            transform: translateY(100%); /* Start hidden off-screen */
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .info-card.visible { transform: translateY(0); }
-
-        .handle { width: 50px; height: 4px; background: #333; margin: -10px auto 20px; border-radius: 10px; }
-
-        h1 { font-size: 28px; margin-bottom: 5px; }
-        .sub-text { color: var(--primary); font-size: 14px; margin-bottom: 20px; font-weight: bold; }
-
-        .tab-content { color: #bbb; line-height: 1.6; font-size: 15px; margin-bottom: 25px; height: 80px; }
-
-        .btn-audio {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            width: 100%;
-            padding: 18px;
-            border-radius: 15px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-        }
+        /* Info Card */
+        .card { background: var(--bg-dark); border-top: 2px solid var(--primary); border-radius: 30px 30px 0 0; padding: 30px; position: fixed; bottom: -100%; left: 0; width: 100%; transition: 0.6s ease; }
+        .card.active { bottom: 0; }
+        .btn { background: var(--primary); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="ar-viewport"></div>
+    <video id="video-feed" autoplay playsinline></video>
 
-    <div class="ui-layer">
+    <div id="start-screen">
+        <h1 style="margin-bottom: 20px;">AR Smart Guide</h1>
+        <p style="color: #888; margin-bottom: 40px; padding: 0 20px;">Allow camera access to begin the AR experience</p>
+        <button class="btn" onclick="initAR()" style="width: 200px;">START CAMERA</button>
+    </div>
+
+    <div class="ui-overlay">
         <nav>
-            <div class="status-badge"><div class="pulse-dot"></div> AI Scanner Active</div>
-            <i data-lucide="menu"></i>
+            <div class="badge"><div class="pulse"></div> SCANNING...</div>
         </nav>
+        <div class="reticle"><div class="scan-line"></div></div>
 
-        <div class="scanner-frame">
-            <div class="scanner-line"></div>
-        </div>
-
-        <div class="info-card" id="infoCard">
-            <div class="handle"></div>
+        <div class="card" id="monumentCard">
             <h1>Taj Mahal</h1>
-            <p class="sub-text">UNESCO WORLD HERITAGE SITE</p>
-            
-            <div class="tab-content">
-                Recognized: Built in 1632. This ivory-white marble mausoleum on the south bank of the Yamuna river in the Indian city of Agra is a masterpiece of architectural symmetry.
-            </div>
-
-            <button class="btn-audio" onclick="alert('Audio playing...')">
-                <i data-lucide="volume-2"></i> START AUDIO GUIDE
-            </button>
+            <p style="color: var(--primary); margin: 5px 0 15px;">Mughal Empire • 1648</p>
+            <p style="color: #ccc; line-height: 1.6;">The Taj Mahal is an ivory-white marble mausoleum on the south bank of the Yamuna river. It was commissioned in 1632 by the Mughal emperor Shah Jahan.</p>
+            <button class="btn" onclick="alert('Playing Audio...')"><i data-lucide="volume-2"></i> PLAY AUDIO</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // SIMULATION: After 1.5 seconds, the scanner "Finds" the monument and slides the UI up
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('infoCard').classList.add('visible');
-            }, 1500);
-        };
+        async function initAR() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" }, // Forces REAR camera on phones
+                    audio: false 
+                });
+                const video = document.getElementById('video-feed');
+                video.srcObject = stream;
+                
+                // Hide start screen
+                document.getElementById('start-screen').style.display = 'none';
+
+                // Simulate recognition after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('monumentCard').classList.add('active');
+                }, 3000);
+
+            } catch (err) {
+                alert("Camera error: " + err.name + ". Make sure you are using HTTPS.");
+            }
+        }
     </script>
 </body>
 </html>
