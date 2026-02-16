@@ -1,83 +1,93 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>AR Smart Guide - Government Museum Chandigarh</title>
+  <title>AR Smart Guide - Image Recognition</title>
+
+  <!-- A-Frame -->
   <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+
+  <!-- MindAR Image Tracking -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; font-family: Arial; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
     .info-box {
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
       background: white;
-      padding: 15px;
-      border-radius: 10px;
+      padding: 20px;
+      border-radius: 12px;
       width: 85%;
-      box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
     }
   </style>
 </head>
 
 <body>
 
+<!-- Info Box -->
 <div id="info" class="info-box"></div>
 
+<!-- AR Scene -->
 <a-scene
   mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
-  color-space="sRGB"
   embedded
+  color-space="sRGB"
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
 >
 
+  <!-- Camera -->
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-  <!-- Target 0 - Gandhara Sculpture -->
+  <!-- Image Target 0 (Mona Lisa) -->
   <a-entity mindar-image-target="targetIndex: 0" id="target0">
-    <a-plane position="0 0 0" width="1" height="0.6" color="orange"></a-plane>
-  </a-entity>
-
-  <!-- Target 1 - Miniature Painting -->
-  <a-entity mindar-image-target="targetIndex: 1" id="target1">
-    <a-plane position="0 0 0" width="1" height="0.6" color="blue"></a-plane>
+    <a-plane 
+      position="0 0 0"
+      width="1"
+      height="0.6"
+      color="#FF9800"
+      opacity="0.9">
+    </a-plane>
   </a-entity>
 
 </a-scene>
 
 <script>
-const infoBox = document.getElementById("info");
+  const infoBox = document.getElementById("info");
+  const target0 = document.querySelector("#target0");
 
-const target0 = document.querySelector("#target0");
-const target1 = document.querySelector("#target1");
+  // When image is detected
+  target0.addEventListener("targetFound", () => {
+    infoBox.innerHTML = `
+      <h3>Mona Lisa</h3>
+      <p><strong>Artist:</strong> Leonardo da Vinci</p>
+      <p><strong>Year:</strong> 1503–1506</p>
+      <p><strong>Importance:</strong> One of the most famous paintings in the world.</p>
+      <p><strong>Fun Fact:</strong> Known for her mysterious and subtle smile.</p>
+    `;
+    infoBox.style.display = "block";
+  });
 
-target0.addEventListener("targetFound", () => {
-  infoBox.innerHTML = `
-    <h3>Gandhara Buddha Sculpture</h3>
-    <p><strong>History:</strong> 1st–5th century CE, Greco-Roman influence.</p>
-    <p><strong>Importance:</strong> Early human representation of Buddha.</p>
-    <p><strong>Fun Fact:</strong> Second largest Gandhara collection in India.</p>
-  `;
-  infoBox.style.display = "block";
-});
-
-target1.addEventListener("targetFound", () => {
-  infoBox.innerHTML = `
-    <h3>Pahari Miniature Painting</h3>
-    <p><strong>Period:</strong> 17th–19th century.</p>
-    <p><strong>Importance:</strong> Depicts mythological themes.</p>
-    <p><strong>Special Feature:</strong> Fine brush detailing.</p>
-  `;
-  infoBox.style.display = "block";
-});
-
-target0.addEventListener("targetLost", () => infoBox.style.display = "none");
-target1.addEventListener("targetLost", () => infoBox.style.display = "none");
+  // When image is lost
+  target0.addEventListener("targetLost", () => {
+    infoBox.style.display = "none";
+  });
 
 </script>
 
