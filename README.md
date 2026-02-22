@@ -4,13 +4,18 @@
 
 ------------------------------------------------------------------------
 
-
 <p align="center">
   <b>
-  An Augmented Reality mobile application that brings monuments and museum exhibits to life through real-time image recognition and contextual overlays.
+    An Augmented Reality mobile application that brings monuments and museum exhibits to life through real-time image recognition and contextual overlays.
   </b>
 </p>
 
+<p align="center">
+  🌐 Live Demo:  
+  <a href="https://suhalesharma-jpg.github.io/arvr_landers/" target="_blank">
+    https://suhalesharma-jpg.github.io/arvr_landers/
+  </a>
+</p>
 
 
 ------------------------------------------------------------------------
