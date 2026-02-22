@@ -5,14 +5,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const audioElement = document.getElementById("audioPlayer");
 
   // ================= LOAD JSON =================
-  try {
-    const response = await fetch("monuments.json");
-    monuments = await response.json();
-    console.log("Monuments loaded:", monuments.length);
-  } catch (error) {
-    console.error("Failed to load monuments.json:", error);
-    return;
+ try {
+  const response = await fetch("./monuments.json");
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
   }
+
+  monuments = await response.json();
+  console.log("Monuments loaded:", monuments.length);
+
+} catch (error) {
+  console.error("Failed to load monuments.json:", error);
+  return;
+}
 
   // ================= INIT AR =================
   const mindarThree = new window.MINDAR.IMAGE.MindARThree({
