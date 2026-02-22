@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AR Smart Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Three.js (must load BEFORE MindAR) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- MindAR -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<header>
+  <h1>🏛 AR Smart Guide</h1>
+  <p>Point your camera at a monument image</p>
+</header>
+
+<div id="ar-container"></div>
+
+<div id="infoPanel">
+  <h2 id="title"></h2>
+  <p id="description"></p>
+  <ul id="details"></ul>
+  <button id="audioBtn">🔊 Play Audio</button>
+</div>
+
+<!-- Audio element -->
+<audio id="audioPlayer" preload="auto"></audio>
+
+<!-- Load JS AFTER everything -->
+<script src="script.js" defer></script>
+
+</body>
+</html>
