@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  background: #000;
+  overflow: hidden;
+}
+
+/* HEADER */
+header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  padding: 12px 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.3));
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+/* AR Container */
+#ar-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* INFO PANEL */
+#infoPanel {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  width: 90%;
+  max-width: 420px;
+  background: rgba(15,15,15,0.92);
+  color: white;
+  padding: 18px;
+  border-radius: 18px;
+  display: none;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  transition: all 0.35s ease;
+}
+
+#infoPanel.active {
+  display: block;
+  transform: translateX(-50%) translateY(0);
+}
+
+#infoPanel h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #00e5ff;
+}
+
+#infoPanel p {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+#infoPanel ul {
+  padding-left: 18px;
+  margin-top: 10px;
+}
+
+#infoPanel li {
+  margin-bottom: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* BUTTON */
+button {
+  margin-top: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  background: linear-gradient(135deg, #00bcd4, #0097a7);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 15px rgba(0,188,212,0.4);
+}
+.blog-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: #222;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.blog-link:hover {
+  background: #444;
+}
