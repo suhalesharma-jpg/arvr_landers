@@ -85,21 +85,5 @@ header p {
 }
 
 /* BUTTON */
-button {
-  margin-top: 14px;
-  padding: 10px 14px;
-  width: 100%;
-  background: linear-gradient(135deg, #00bcd4, #0097a7);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
 
-button:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 15px rgba(0,188,212,0.4);
-}
 
