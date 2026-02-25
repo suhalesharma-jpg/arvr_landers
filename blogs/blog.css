@@ -1,0 +1,101 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f4f6f9;
+  color: #333;
+  line-height: 1.8;
+}
+
+/* ===== HEADER ===== */
+.blog-header {
+  background: linear-gradient(135deg, #111, #222);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.blog-header h1 {
+  margin: 0;
+  font-size: 36px;
+}
+
+.blog-header p {
+  margin-top: 10px;
+  color: #ccc;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 850px;
+  margin: 40px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* ===== HEADINGS ===== */
+h2 {
+  margin-top: 35px;
+  border-left: 4px solid #111;
+  padding-left: 10px;
+}
+
+h3 {
+  margin-top: 25px;
+}
+
+/* ===== LISTS ===== */
+ul, ol {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+/* ===== BUTTONS ===== */
+.nav-btn {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 10px 18px;
+  background: #111;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #444;
+}
+
+/* ===== BLOG LIST PAGE CARDS ===== */
+.blog-card {
+  background: white;
+  padding: 25px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+}
+
+.blog-card h3 {
+  margin-top: 0;
+}
+
+.blog-card a {
+  text-decoration: none;
+  color: #111;
+  font-weight: bold;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+  margin-top: 40px;
+}
