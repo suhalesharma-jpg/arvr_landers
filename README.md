@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  🌐 Live Demo:  
+  🌐 Live Site:  
   <a href="https://suhalesharma-jpg.github.io/arvr_landers/" target="_blank">
     https://suhalesharma-jpg.github.io/arvr_landers/
   </a>
