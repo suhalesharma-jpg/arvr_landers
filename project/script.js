@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ================= LOAD JSON =================
  try {
-  const response = await fetch("./monuments.json");
+  const response = await fetch("monuments.json");
 
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ================= INIT AR =================
   const mindarThree = new window.MINDAR.IMAGE.MindARThree({
     container: document.querySelector("#ar-container"),
-    imageTargetSrc: "./assets/targets.mind"
+    imageTargetSrc: "assets/targets.mind"
   });
 
   const { renderer, scene, camera } = mindarThree;
