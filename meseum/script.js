@@ -5,6 +5,8 @@ const video = document.createElement("video");
 video.autoplay = true;
 video.muted = true;
 video.playsInline = true;
+video.style.width = "400px";
+document.body.appendChild(video); // 🔥 IMPORTANT
 
 // Canvas
 const canvas = document.getElementById("canvas");
@@ -18,20 +20,28 @@ document.body.appendChild(startBtn);
 // ===== MODEL =====
 let session = null;
 
-// Use CDN (more reliable than GitHub direct)
-const MODEL_URL =
-  "https://github.com/suhalesharma-jpg/arvr_landers/releases/download/v1.0/my_model.onnx";
-
+// Try multiple URLs
 const MODEL_URLS = [
   "https://cdn.jsdelivr.net/gh/suhalesharma-jpg/arvr_landers@v1.0/my_model.onnx",
   "https://github.com/suhalesharma-jpg/arvr_landers/releases/download/v1.0/my_model.onnx"
 ];
 
-// Load model
+// Load model with fallback
 async function loadModel() {
   console.log("Loading model...");
-  session = await ort.InferenceSession.create(MODEL_URL);
-  console.log("Model loaded");
+
+  for (let url of MODEL_URLS) {
+    try {
+      console.log("Trying:", url);
+      session = await ort.InferenceSession.create(url);
+      console.log("Model loaded from:", url);
+      return;
+    } catch (err) {
+      console.warn("Failed:", url);
+    }
+  }
+
+  console.error("❌ All model URLs failed");
 }
 
 // ===== START CAMERA =====
@@ -45,7 +55,7 @@ startBtn.onclick = async () => {
     await video.play();
     console.log("Camera started");
 
-    await loadModel();   // load model first
+    await loadModel();   // try loading model
     runDetection();
 
   } catch (err) {
@@ -68,9 +78,9 @@ function preprocess() {
   const input = new Float32Array(3 * size * size);
 
   for (let i = 0; i < size * size; i++) {
-    input[i] = data[i * 4] / 255; // R
-    input[i + size * size] = data[i * 4 + 1] / 255; // G
-    input[i + 2 * size * size] = data[i * 4 + 2] / 255; // B
+    input[i] = data[i * 4] / 255;
+    input[i + size * size] = data[i * 4 + 1] / 255;
+    input[i + 2 * size * size] = data[i * 4 + 3 - 1] / 255;
   }
 
   return new ort.Tensor("float32", input, [1, 3, size, size]);
@@ -80,22 +90,29 @@ function preprocess() {
 function runDetection() {
   setInterval(async () => {
 
-    if (!session || !video.videoWidth) return;
+    if (!video.videoWidth) return;
 
-    console.log("Running detection...");
+    // Always show video frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+
+    // If model not loaded → still show camera
+    if (!session) {
+      ctx.fillStyle = "red";
+      ctx.fillText("Model not loaded", 20, 30);
+      return;
+    }
 
     try {
       const tensor = preprocess();
-
-      // Run model
       const results = await session.run({ images: tensor });
 
       console.log("Raw output:", results);
 
-      // ===== SIMPLE VISUAL FEEDBACK =====
+      // Demo overlay
       ctx.strokeStyle = "lime";
       ctx.lineWidth = 4;
-
       ctx.strokeRect(50, 50, 200, 200);
 
       ctx.fillStyle = "lime";
