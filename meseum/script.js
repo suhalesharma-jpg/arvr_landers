@@ -22,6 +22,11 @@ let session = null;
 const MODEL_URL =
   "https://github.com/suhalesharma-jpg/arvr_landers/releases/download/v1.0/my_model.onnx";
 
+const MODEL_URLS = [
+  "https://cdn.jsdelivr.net/gh/suhalesharma-jpg/arvr_landers@v1.0/my_model.onnx",
+  "https://github.com/suhalesharma-jpg/arvr_landers/releases/download/v1.0/my_model.onnx"
+];
+
 // Load model
 async function loadModel() {
   console.log("Loading model...");
