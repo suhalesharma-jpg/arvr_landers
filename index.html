@@ -45,10 +45,10 @@
     }
 
     .card-container {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
 
     .card {
       flex: 1 1 300px;
@@ -135,6 +135,13 @@
       <p>Experience the live augmented reality monument recognition system.</p>
       <a href="project/index.html" class="btn">Launch Demo</a>
     </div>
+
+    
+  <div class="card">
+    <h3>AR Museum Demo</h3>
+    <p>Real-time object detection using YOLO (running directly in browser).</p>
+    <a href="museum/index.html" class="btn">Launch Demo</a>
+  </div>
 
     <div class="card">
       <h3>Development Logs</h3>
