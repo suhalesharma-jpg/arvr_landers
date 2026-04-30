@@ -21,10 +21,7 @@ document.body.appendChild(startBtn);
 let session = null;
 
 // Try multiple URLs
-const MODEL_URLS = [
-  "https://cdn.jsdelivr.net/gh/suhalesharma-jpg/arvr_landers@v1.0/my_model.onnx",
-  "https://github.com/suhalesharma-jpg/arvr_landers/releases/download/v1.0/my_model.onnx"
-];
+const MODEL_URL = "https://huggingface.co/suhalesharma34/arvr-model/resolve/main/my_model.onnx";
 
 // Load model with fallback
 async function loadModel() {
