@@ -55,7 +55,7 @@ startBtn.onclick = async () => {
 
 // ===== PREPROCESS =====
 function preprocess() {
-  const size = 640;
+  const size = 320; // ✅ FIXED
 
   canvas.width = size;
   canvas.height = size;
@@ -67,9 +67,9 @@ function preprocess() {
   const input = new Float32Array(3 * size * size);
 
   for (let i = 0; i < size * size; i++) {
-    input[i] = data[i * 4] / 255; // R
-    input[i + size * size] = data[i * 4 + 1] / 255; // G
-    input[i + 2 * size * size] = data[i * 4 + 2] / 255; // B
+    input[i] = data[i * 4] / 255;
+    input[i + size * size] = data[i * 4 + 1] / 255;
+    input[i + 2 * size * size] = data[i * 4 + 2] / 255;
   }
 
   return new ort.Tensor("float32", input, [1, 3, size, size]);
