@@ -6,7 +6,7 @@ video.autoplay = true;
 video.muted = true;
 video.playsInline = true;
 video.style.width = "400px";
-document.body.appendChild(video); // 🔥 IMPORTANT
+document.body.appendChild(video);
 
 // Canvas
 const canvas = document.getElementById("canvas");
@@ -20,25 +20,18 @@ document.body.appendChild(startBtn);
 // ===== MODEL =====
 let session = null;
 
-// Try multiple URLs
-const MODEL_URL = "https://huggingface.co/suhalesharma34/arvr-model/resolve/main/my_model.onnx";
+const MODEL_URL =
+  "https://huggingface.co/suhalesharma34/arvr-model/resolve/main/my_model.onnx";
 
-// Load model with fallback
+// Load model
 async function loadModel() {
   console.log("Loading model...");
-
-  for (let url of MODEL_URLS) {
-    try {
-      console.log("Trying:", url);
-      session = await ort.InferenceSession.create(url);
-      console.log("Model loaded from:", url);
-      return;
-    } catch (err) {
-      console.warn("Failed:", url);
-    }
+  try {
+    session = await ort.InferenceSession.create(MODEL_URL);
+    console.log("✅ Model loaded");
+  } catch (err) {
+    console.error("❌ Model load error:", err);
   }
-
-  console.error("❌ All model URLs failed");
 }
 
 // ===== START CAMERA =====
@@ -52,7 +45,7 @@ startBtn.onclick = async () => {
     await video.play();
     console.log("Camera started");
 
-    await loadModel();   // try loading model
+    await loadModel();
     runDetection();
 
   } catch (err) {
@@ -64,9 +57,9 @@ startBtn.onclick = async () => {
 function preprocess() {
   const size = 640;
 
+  // Resize frame to model input
   canvas.width = size;
   canvas.height = size;
-
   ctx.drawImage(video, 0, 0, size, size);
 
   const imageData = ctx.getImageData(0, 0, size, size);
@@ -75,9 +68,9 @@ function preprocess() {
   const input = new Float32Array(3 * size * size);
 
   for (let i = 0; i < size * size; i++) {
-    input[i] = data[i * 4] / 255;
-    input[i + size * size] = data[i * 4 + 1] / 255;
-    input[i + 2 * size * size] = data[i * 4 + 3 - 1] / 255;
+    input[i] = data[i * 4] / 255; // R
+    input[i + size * size] = data[i * 4 + 1] / 255; // G
+    input[i + 2 * size * size] = data[i * 4 + 2] / 255; // B
   }
 
   return new ort.Tensor("float32", input, [1, 3, size, size]);
@@ -89,25 +82,27 @@ function runDetection() {
 
     if (!video.videoWidth) return;
 
-    // Always show video frame
+    // Draw live video frame
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    // If model not loaded → still show camera
+    // If model not ready
     if (!session) {
       ctx.fillStyle = "red";
-      ctx.fillText("Model not loaded", 20, 30);
+      ctx.font = "20px Arial";
+      ctx.fillText("Loading model...", 20, 30);
       return;
     }
 
     try {
       const tensor = preprocess();
+
       const results = await session.run({ images: tensor });
 
       console.log("Raw output:", results);
 
-      // Demo overlay
+      // ===== TEMP VISUAL (until decoding added) =====
       ctx.strokeStyle = "lime";
       ctx.lineWidth = 4;
       ctx.strokeRect(50, 50, 200, 200);
