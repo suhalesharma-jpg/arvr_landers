@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Museum Explorer AR</title>
 
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+  <!-- MindAR -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+ 
+<!-- MENU -->
+<div id="menu">
+  <h3>Category</h3>
+  <button onclick="selectCategory('anthropology')">Anthropology</button>
+  <button onclick="selectCategory('archaeology')">Archaeology</button>
+  <button onclick="selectCategory('arms')">Arms</button>
+  <button onclick="selectCategory('decorative')">Decorative</button>
+</div>
+
+<!-- INFO PANEL -->
+<div id="ui">
+  <h2 id="title">Loading...</h2>
+  <p id="description">Initializing AR</p>
+</div>
+
+<!-- ⚠️ IMPORTANT: mindar-image set via JS BEFORE load -->
+<a-scene id="scene"
+  mindar-image="imageTargetSrc: target/anthropology/set1.mind; autoStart: true;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: true"
+  embedded>
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+</a-scene>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
