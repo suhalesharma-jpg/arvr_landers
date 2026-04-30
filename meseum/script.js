@@ -23,7 +23,7 @@ let session = null;
 const MODEL_URL =
   "https://huggingface.co/suhalesharma34/arvr-model/resolve/main/my_model.onnx";
 
-// Load model
+// ===== LOAD MODEL =====
 async function loadModel() {
   console.log("Loading model...");
   try {
@@ -57,7 +57,6 @@ startBtn.onclick = async () => {
 function preprocess() {
   const size = 640;
 
-  // Resize frame to model input
   canvas.width = size;
   canvas.height = size;
   ctx.drawImage(video, 0, 0, size, size);
@@ -76,44 +75,98 @@ function preprocess() {
   return new ort.Tensor("float32", input, [1, 3, size, size]);
 }
 
+// ===== YOLO OUTPUT DECODER =====
+function processYOLOOutput(output, threshold = 0.4) {
+  const data = output.data;
+  const dims = output.dims;
+
+  console.log("Output shape:", dims);
+
+  let boxes = [];
+
+  // Handle YOLOv8 format: [1, 84, 8400]
+  if (dims.length === 3 && dims[1] === 84) {
+    const numPred = dims[2];
+
+    for (let i = 0; i < numPred; i++) {
+      const x = data[i];
+      const y = data[i + numPred];
+      const w = data[i + numPred * 2];
+      const h = data[i + numPred * 3];
+      const objConf = data[i + numPred * 4];
+
+      if (objConf < threshold) continue;
+
+      // class scores
+      let maxClass = 0;
+      let maxScore = 0;
+
+      for (let c = 5; c < 84; c++) {
+        let score = data[i + numPred * c];
+        if (score > maxScore) {
+          maxScore = score;
+          maxClass = c - 5;
+        }
+      }
+
+      boxes.push({
+        x, y, w, h,
+        conf: objConf,
+        classId: maxClass
+      });
+    }
+  }
+
+  return boxes;
+}
+
 // ===== MAIN LOOP =====
 function runDetection() {
   setInterval(async () => {
 
     if (!video.videoWidth) return;
 
-    // Draw live video frame
+    // Draw camera
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    // If model not ready
     if (!session) {
       ctx.fillStyle = "red";
-      ctx.font = "20px Arial";
       ctx.fillText("Loading model...", 20, 30);
       return;
     }
 
     try {
       const tensor = preprocess();
-
       const results = await session.run({ images: tensor });
 
-      console.log("Raw output:", results);
+      const output = Object.values(results)[0];
 
-      // ===== TEMP VISUAL (until decoding added) =====
+      const boxes = processYOLOOutput(output, 0.4);
+
+      // Draw detections
       ctx.strokeStyle = "lime";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(50, 50, 200, 200);
+      ctx.lineWidth = 2;
+      ctx.font = "14px Arial";
 
-      ctx.fillStyle = "lime";
-      ctx.font = "20px Arial";
-      ctx.fillText("DETECTED", 60, 45);
+      boxes.forEach(box => {
+        let x1 = box.x - box.w / 2;
+        let y1 = box.y - box.h / 2;
+
+        ctx.strokeRect(x1, y1, box.w, box.h);
+
+        ctx.fillStyle = "lime";
+        ctx.fillText(
+          `ID:${box.classId} ${(box.conf * 100).toFixed(1)}%`,
+          x1,
+          y1 - 5
+        );
+      });
 
     } catch (err) {
       console.error("Detection error:", err);
     }
 
-  }, 1000);
+  }, 500);
 }
